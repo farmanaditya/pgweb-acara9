@@ -11,7 +11,7 @@
     <meta name="description" content="leaflet basic">
 
     <!-- Judul pada tab browser -->
-    <title>LeafletJS - Covid-19 Map</title>
+    <title>LeafletJS Map</title>
 
     <!-- Leaflet CSS Library -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
@@ -82,7 +82,7 @@
         var marker2 = L.marker([-7.800016623445037, 110.36621783947184]);
         marker2.addTo(map);
         marker2.bindPopup("Museum Benteng Vredeburg");
-        
+
 
         <?php
         $servername = "localhost";
@@ -92,25 +92,26 @@
         $conn = new mysqli($servername, $username, $password, $dbname);
 
         if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+            die("Connection failed: " . $conn->connect_error);
         }
-        
+
         $sql = "SELECT * FROM tabel1";
         $result = $conn->query($sql);
-        
+
         if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
+            while ($row = $result->fetch_assoc()) {
                 $lat = $row["latitude"];
                 $long = $row["longitude"];
                 $info = $row["kecamatan"];
                 echo "L.marker([$lat, $long]).addTo(map).bindPopup('$info');";
-            } 
-        }
-        else {
+            }
+        } else {
             echo "0 results";
         }
-            $conn->close();
-    ?>
+        $conn->close();
+        ?>
+
+
 
 
         /* Control Layer */
@@ -125,7 +126,7 @@
         };
 
 
-        
+
         var overlayMaps = {
             "Museum Sonobudoyo": marker1,
             "Museum Benteng Vredeburg": marker2,

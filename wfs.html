@@ -1,13 +1,7 @@
-<!DOCTYPE html>
+<!DOCTYPE html>mar
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="author" content="DIVSIG UGM">
-  <meta name="description" content="leaflet basic">
 
   <!-- Search CSS Library -->
   <link rel="stylesheet" href="assets/plugins/leaflet-search/leaflet-search.css" />
@@ -25,15 +19,11 @@
   <!-- EasyPrint CSS Library -->
   <link rel="stylesheet" href="assets/plugins/leaflet-easyprint/easyPrint.css" />
 
-  <!-- Judul pada tab browser -->
-  <title>Map COVID-19 Sleman</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map Geoserver</title>
 
-  <!-- Leaflet CSS Library -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
-
-  <!-- Tab browser icon -->
-  <link rel="icon" type="image/x-icon" href="http://luk.staff.ugm.ac.id/logo/UGM/Resmi/Warna.gif">
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <style>
     <!-- /* Background pada Judul */ 
     -->
@@ -101,12 +91,12 @@
 
   <!-- EasyPrint JavaScript Library -->
   <script src="assets/plugins/leaflet-easyprint/leaflet.easyPrint.js"></script>
-
   <div id="map"></div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
+
     // /* Initial Map */ (note: sesuaikan setView koordinat dan zoom level ke titik tengah lembar peta)
     var map = L.map('map').setView([-0.789275, 113.921327], 5); //lat, long, zoom 
 
@@ -144,69 +134,19 @@
     basemap4.addTo(map);
 
 
-    /* Layer Marker */
-    var marker1 = L.marker([-7.802267603646753, 110.36434057995203], { draggable: true });
-    marker1.addTo(map);
-    marker1.bindPopup("Museum Sonobudoyo");
-
-    var marker2 = L.marker([-7.800016623445037, 110.36621783947184]);
-    marker2.addTo(map);
-    marker2.bindPopup("Museum Benteng Vredeburg");
-
-    var marker3 = L.marker([-7.7774, 110.248]);
-    marker3.addTo(map);
-    marker3.bindPopup("Moyudan");
-
-    var marker4 = L.marker([-7.7318, 110.248]);
-    marker4.addTo(map);
-    marker4.bindPopup("Minggir");
-
     /* Judul dan Subjudul */
     var title = new L.Control();
     title.onAdd = function (map) {
       this._div = L.DomUtil.create('div', 'info');
       this.update();
       return this._div;
-
     };
-    title.update = function () {
-      this._div.innerHTML = '<h2>LATIHAN WEBGIS | KASUS COVID-19 KABUPATEN SLEMAN</h2> PEMROGRAMAN SPASIAL: WEB'
 
+     title.update = function () {
+      this._div.innerHTML = '<h2>LATIHAN WEBGIS | COVID-19 KABUPATEN SLEMAN</h2>MATAKULIAHPEMROGRAMAN SPASIAL : WEB'
     };
     title.addTo(map);
 
-    /* Control Layer */
-    var baseMaps = {
-      "OpenStreetMap": basemap1,
-      "Esri World Street": basemap2,
-      "Esri Imagery": basemap3,
-      "Stadia Dark Mode": basemap4,
-      "Stadia Light Mode": basemap5,
-      "Stadia Bright Mode": basemap6,
-      "Esri World NatGeo": basemap7
-    };
-
-    var overlayMaps = {
-      "Museum Sonobudoyo": marker1,
-      "Museum Benteng Vredeburg": marker2,
-    };
-
-    L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
-
-    /* Image Legend */
-    L.Control.Legend = L.Control.extend({
-      onAdd: function (map) {
-        var img = L.DomUtil.create('img');
-        img.src = 'assets/img/legend/legenda.png';
-        img.style.width = '250px';
-        return img;
-      }
-    });
-
-    L.control.Legend = function (opts) {
-      return new L.Control.Legend(opts);
-    }
-    L.control.Legend({ position: 'bottomleft' }).addTo(map);
 
 
     /* Image Logo */
@@ -226,23 +166,37 @@
     L.control.Watermark({ position: 'topleft' }).addTo(map);
 
 
+
+    /* Image Legend */
+    L.Control.Legend = L.Control.extend({
+      onAdd: function (map) {
+        var img = L.DomUtil.create('img');
+        img.src = 'assets/img/legend/legenda.png';
+        img.style.width = '250px';
+        return img;
+      }
+    });
+
+    L.control.Legend = function (opts) {
+      return new L.Control.Legend(opts);
+    }
+    L.control.Legend({ position: 'bottomleft' }).addTo(map);
+
+
+
+
+   
+
     var wfsgeoserver1 = L.geoJson(null, {
       pointToLayer: function (feature, latlng) {
         return L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: "assets/img/marker/hospital.png",
-            iconSize: [20, 20],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32],
-            tooltipAnchor: [16, -20]
-          })
+
         });
       },
       onEachFeature: function (feature, layer) {
-        var content = "Nama Kecamatan : " + feature.properties.kecamatan + "<br>" +
-          "Status Aktif Covid : " + feature.properties.aktif + "<br>" +
-          "Jumlah Meninggal : " + feature.properties.meninggal + "<br>" +
-          "Jumlah Sembuh : " + feature.properties.sembuh + "<br>" +
+        var content = "Kecamatan: " + feature.properties.kecamatan + "<br>" +
+          "Meninggal: " + feature.properties.meninggal + "<br>" +
+          "Sembuh: " + feature.properties.sembuh + "<br>" +
           "<img src= 'Photos/1.png' width='100'>";
 
         layer.on({
@@ -267,11 +221,13 @@
       map.fitBounds(wfsgeoserver1.getBounds());
     });
 
-    // / * Plugin Search * /
+
+
+    // // *Plugin Search */
     var searchControl = new L.Control.Search({
       position: "topleft",
       layer: wfsgeoserver1, //Nama variabel layer
-      propertyName: "kecamatan", //Field untuk pencarian
+      propertyName: "KECAMATAN", //Field untuk pencarian
       marker: false,
       moveToLocation: function (latlng, title, map) {
         var zoom = map.getBoundsZoom(latlng.layer.getBounds());
@@ -330,22 +286,43 @@
     L.control.mousePosition({ position: "bottomright", separator: ",", prefix: "Point Coodinate: " }).addTo(map);
 
 
-    /*Plugin Measurement Tool */
-    var measureControl = new L.Control.Measure({
-      position: "topleft",
-      primaryLengthUnit: "meters",
-      secondaryLengthUnit: "kilometers",
-      primaryAreaUnit: "hectares",
-      secondaryAreaUnit: "sqmeters",
-      activeColor: "#FF0000",
-      completedColor: "#00FF00",
-    });
-    measureControl.addTo(map);
+ /* Layer Marker */
+ var marker1 = L.marker([-7.802267603646753, 110.36434057995203], { draggable: true });
+        marker1.addTo(map);
+        marker1.bindPopup("Museum Sonobudoyo");
 
-    /*Plugin EasyPrint */
-    L.easyPrint({
-      title: "Print",
-    }).addTo(map);
+        var marker2 = L.marker([-7.800016623445037, 110.36621783947184]);
+        marker2.addTo(map);
+        marker2.bindPopup("Museum Benteng Vredeburg");
+        
+        var marker3 = L.marker([-7.7774, 110.248]);
+        marker3.addTo(map);
+        marker3.bindPopup("Moyudan");
+        
+        var marker4 = L.marker([-7.7318, 110.248]);
+        marker4.addTo(map);
+        marker4.bindPopup("Minggir");
+
+ /* Control Layer */
+ var baseMaps = {
+            "OpenStreetMap": basemap1,
+            "Esri World Street": basemap2,
+            "Esri Imagery": basemap3,
+            "Stadia Dark Mode": basemap4,
+            "Stadia Light Mode": basemap5,
+            "Stadia Bright Mode": basemap6,
+            "Esri World NatGeo": basemap7
+        };
+
+
+        
+        var overlayMaps = {
+            "Museum Sonobudoyo": marker1,
+            "Museum Benteng Vredeburg": marker2,
+        };
+
+        L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
+
 
   </script>
 </body>

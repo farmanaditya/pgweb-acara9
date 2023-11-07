@@ -11,7 +11,7 @@
     <meta name="description" content="leaflet basic">
 
     <!-- Judul pada tab browser -->
-    <title>LeafletJS - Covid-19 Map</title>
+    <title>LeafletJS Map</title>
 
     <!-- Leaflet CSS Library -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
@@ -83,6 +83,13 @@
         marker2.addTo(map);
         marker2.bindPopup("Museum Benteng Vredeburg");
         
+        var marker3 = L.marker([-7.7774, 110.248]);
+        marker3.addTo(map);
+        marker3.bindPopup("Moyudan");
+        
+        var marker4 = L.marker([-7.7318, 110.248]);
+        marker4.addTo(map);
+        marker4.bindPopup("Minggir");
 
         /* Control Layer */
         var baseMaps = {
