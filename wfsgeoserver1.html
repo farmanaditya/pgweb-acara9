@@ -107,6 +107,48 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script>
+
+    var wfsgeoserver1 = L.geoJson(null, {
+      pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, {
+          icon: L.icon({
+            iconUrl: "assets/img/marker/hospital.png",
+            iconSize: [20, 20],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32],
+            tooltipAnchor: [16, -20]
+          })
+        });
+      },
+      onEachFeature: function (feature, layer) {
+        var content = "Nama Kecamatan : " + feature.properties.kecamatan + "<br>" +
+          "Status Aktif Covid : " + feature.properties.aktif + "<br>" +
+          "Jumlah Meninggal : " + feature.properties.meninggal + "<br>" +
+          "Jumlah Sembuh : " + feature.properties.sembuh + "<br>" +
+          "<img src= 'Photos/1.png' width='100'>";
+
+        layer.on({
+          click: function (e) {
+            wfsgeoserver1.bindPopup(content).openPopup();
+          },
+          mouseover: function (e) {
+            wfsgeoserver1.bindTooltip(feature.properties.nama).openTooltip();
+          },
+          mouseout: function (e) {
+            wfsgeoserver1.closePopup();
+            wfsgeoserver1.closeTooltip();
+          }
+        });
+      }
+    });
+
+
+    $.getJSON("wfsgeoserver1.php", function (data) {
+      wfsgeoserver1.addData(data);
+      wfsgeoserver1.addTo(map);
+      map.fitBounds(wfsgeoserver1.getBounds());
+    });
+
     // /* Initial Map */ (note: sesuaikan setView koordinat dan zoom level ke titik tengah lembar peta)
     var map = L.map('map').setView([-0.789275, 113.921327], 5); //lat, long, zoom 
 
@@ -189,6 +231,8 @@
     var overlayMaps = {
       "Museum Sonobudoyo": marker1,
       "Museum Benteng Vredeburg": marker2,
+      "Moyudan": marker3,
+      "Minggir": marker4
     };
 
     L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
@@ -226,46 +270,7 @@
     L.control.Watermark({ position: 'topleft' }).addTo(map);
 
 
-    var wfsgeoserver1 = L.geoJson(null, {
-      pointToLayer: function (feature, latlng) {
-        return L.marker(latlng, {
-          icon: L.icon({
-            iconUrl: "assets/img/marker/hospital.png",
-            iconSize: [20, 20],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32],
-            tooltipAnchor: [16, -20]
-          })
-        });
-      },
-      onEachFeature: function (feature, layer) {
-        var content = "Nama Kecamatan : " + feature.properties.kecamatan + "<br>" +
-          "Status Aktif Covid : " + feature.properties.aktif + "<br>" +
-          "Jumlah Meninggal : " + feature.properties.meninggal + "<br>" +
-          "Jumlah Sembuh : " + feature.properties.sembuh + "<br>" +
-          "<img src= 'Photos/1.png' width='100'>";
 
-        layer.on({
-          click: function (e) {
-            wfsgeoserver1.bindPopup(content).openPopup();
-          },
-          mouseover: function (e) {
-            wfsgeoserver1.bindTooltip(feature.properties.nama).openTooltip();
-          },
-          mouseout: function (e) {
-            wfsgeoserver1.closePopup();
-            wfsgeoserver1.closeTooltip();
-          }
-        });
-      }
-    });
-
-
-    $.getJSON("wfsgeoserver1.php", function (data) {
-      wfsgeoserver1.addData(data);
-      wfsgeoserver1.addTo(map);
-      map.fitBounds(wfsgeoserver1.getBounds());
-    });
 
     // / * Plugin Search * /
     var searchControl = new L.Control.Search({

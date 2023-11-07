@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Search CSS Library -->
+    <link rel="stylesheet" href="assets/plugins/leaflet-search/leaflet-search.css" />
+
+    <!-- Geolocation CSS Library for Plugin -->
+    <link rel="stylesheet"
+        href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css" />
+
+    <!-- Leaflet Mouse Position CSS Library -->
+    <link rel="stylesheet" href="assets/plugins/leaflet-mouseposition/L.Control.MousePosition.css" />
+
+    <!-- Leaflet Measure CSS Library -->
+    <link rel="stylesheet" href="assets/plugins/leaflet-measure/leaflet-measure.css" />
+
+    <!-- EasyPrint CSS Library -->
+    <link rel="stylesheet" href="assets/plugins/leaflet-easyprint/easyPrint.css" />
+
+    <!-- Tab browser icon -->
+  <link rel="icon" type="image/x-icon" href="http://luk.staff.ugm.ac.id/logo/UGM/Resmi/Warna.gif">
+    <style>
+        #map {
+            height: 97.5vh;
+        }
+
+        *.info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .info h2 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- Search JavaScript Library -->
+    <script src="assets/plugins/leaflet-search/leaflet-search.js"></script>
+
+    <!-- Geolocation Javascript Library -->
+    <script
+        src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
+
+    <!-- Leaflet Mouse Position JavaScript Library -->
+    <script src="assets/plugins/leaflet-mouseposition/L.Control.MousePosition.js"></script>
+
+    <!-- Leaflet Measure JavaScript Library -->
+    <script src="assets/plugins/leaflet-measure/leaflet-measure.js"></script>
+
+    <!-- EasyPrint JavaScript Library -->
+    <script src="assets/plugins/leaflet-easyprint/leaflet.easyPrint.js"></script>
+
+    <script>
+        var wfsgeoserver1 = L.geoJson(null, {
+            pointToLayer: function (feature, latlng) {
+                return L.marker(latlng, {
+            
+                });
+            },
+            onEachFeature: function (feature, layer) {
+        var content = "Nama Kecamatan : " + feature.properties.kecamatan + "<br>" +
+          "Status Aktif Covid : " + feature.properties.aktif + "<br>" +
+          "Jumlah Meninggal : " + feature.properties.meninggal + "<br>" +
+          "Jumlah Sembuh : " + feature.properties.sembuh + "<br>" +
+          "<img src= 'Photos/1.png' width='100'>";
+
+                layer.on({
+                    click: function (e) {
+                        wfsgeoserver1.bindPopup(content).openPopup();
+                    },
+                    mouseover: function (e) {
+                        wfsgeoserver1
+                            .bindTooltip(feature.properties.kecamatan)
+                            .openTooltip();
+                    },
+                    mouseout: function (e) {
+                        wfsgeoserver1.closePopup();
+                        wfsgeoserver1.closeTooltip();
+                    },
+                });
+            },
+        });
+
+        $.getJSON("wfsgeoserver1.php", function (data) {
+            wfsgeoserver1.addData(data);
+            wfsgeoserver1.addTo(map);
+            map.fitBounds(wfsgeoserver1.getBounds());
+        });
+        // Inisialisasi Peta
+        var map = L.map("map").setView([-7.7956, 110.3695], 10);
+
+        // Judul
+        var title = new L.Control();
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create("div", "info");
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML =
+                "<h2>LATIHAN WEBGIS | JUMLAH PENDUDUK KAB. SLEMAN</h2>MATAKULIAH PEMROGRAMAN SPASIAL : WEB";
+        };
+        title.addTo(map);
+
+        /* Image Legend */
+    L.Control.Legend = L.Control.extend({
+      onAdd: function (map) {
+        var img = L.DomUtil.create('img');
+        img.src = 'assets/img/legend/legenda.png';
+        img.style.width = '200px';
+        return img;
+      }
+    });
+
+    L.control.Legend = function (opts) {
+      return new L.Control.Legend(opts);
+    }
+    L.control.Legend({ position: 'bottomleft' }).addTo(map);
+
+
+    /* Image Logo */
+    L.Control.Watermark = L.Control.extend({
+      onAdd: function (map) {
+        var img = L.DomUtil.create('img');
+        img.src = 'assets/img/logo/sig.png';
+        img.style.width = '150px';
+        return img;
+      }
+    });
+
+    L.control.Watermark = function (opts) {
+      return new L.Control.Watermark(opts);
+    }
+
+    L.control.Watermark({ position: 'topleft' }).addTo(map);
+
+       // /* Tile Basemap */ (note: pilihan basemap diakses pada https://leaflet-extras.github.io/leaflet-providers/preview/)
+    var basemap1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | <a href="DIVSIG UGM" target="_blank">DIVSIG UGM</a>' //menambahkan nama//
+    });
+    var basemap2 = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri | <a href="Latihan WebGIS" target="_blank">DIVSIG UGM</a>'
+    });
+
+    var basemap3 = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri | <a href="Lathan WebGIS" target="_blank">DIVSIG UGM</a>'
+    });
+
+    var basemap4 = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+    });
+
+
+    var basemap5 = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+    });
+
+    var basemap6 = L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+    });
+
+    var basemap7 = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+      maxZoom: 16
+    });
+
+
+    basemap4.addTo(map);
+
+
+    /* Layer Marker */
+    var marker1 = L.marker([-7.802267603646753, 110.36434057995203], { draggable: true });
+    marker1.addTo(map);
+    marker1.bindPopup("Museum Sonobudoyo");
+
+    var marker2 = L.marker([-7.800016623445037, 110.36621783947184]);
+    marker2.addTo(map);
+    marker2.bindPopup("Museum Benteng Vredeburg");
+
+    var marker3 = L.marker([-7.7774, 110.248]);
+    marker3.addTo(map);
+    marker3.bindPopup("Moyudan");
+
+    var marker4 = L.marker([-7.7318, 110.248]);
+    marker4.addTo(map);
+    marker4.bindPopup("Minggir");
+
+    /* Judul dan Subjudul */
+    var title = new L.Control();
+    title.onAdd = function (map) {
+      this._div = L.DomUtil.create('div', 'info');
+      this.update();
+      return this._div;
+
+    };
+
+
+    /* Control Layer */
+    var baseMaps = {
+      "OpenStreetMap": basemap1,
+      "Esri World Street": basemap2,
+      "Esri Imagery": basemap3,
+      "Stadia Dark Mode": basemap4,
+      "Stadia Light Mode": basemap5,
+      "Stadia Bright Mode": basemap6,
+      "Esri World NatGeo": basemap7
+    };
+
+    var overlayMaps = {
+      "Museum Sonobudoyo": marker1,
+      "Museum Benteng Vredeburg": marker2,
+      "Moyudan": marker3,
+      "Minggir": marker4
+    };
+
+    L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
+
+        // Plugin Search
+        var searchControl = new L.Control.Search({
+            position: "topleft",
+            layer: wfsgeoserver1, //Nama variabel layer
+            propertyName: "kecamatan", //Field untuk pencarian
+            marker: false,
+            moveToLocation: function (latlng, title, map) {
+                var zoom = map.getBoundsZoom(latlng.layer.getBounds());
+                map.setView(latlng, zoom);
+            },
+        });
+        searchControl
+            .on("search:locationfound", function (e) {
+                e.layer.setStyle({
+                    fillColor: "#ffff00",
+                    color: "#0000ff",
+                });
+            })
+            .on("search:collapse", function (e) {
+                featuresLayer.eachLayer(function (layer) {
+                    featuresLayer.resetStyle(layer);
+                });
+            });
+        map.addControl(searchControl);
+
+        /*Plugin Geolocation */
+        var locateControl = L.control
+            .locate({
+                position: "topleft",
+                drawCircle: true,
+                follow: true,
+                setView: true,
+                keepCurrentZoomLevel: false,
+                markerStyle: {
+                    weight: 1,
+                    opacity: 0.8,
+                    fillOpacity: 0.8,
+                },
+                circleStyle: {
+                    weight: 1,
+                    clickable: false,
+                },
+                icon: "fas fa-crosshairs",
+                metric: true,
+                strings: {
+                    title: "Click for Your Location",
+                    popup: "You're here. Accuracy {distance} {unit}",
+                    outsideMapBoundsMsg: "Not available",
+                },
+                locateOptions: {
+                    maxZoom: 16,
+                    watch: true,
+                    enableHighAccuracy: true,
+                    maximumAge: 10000,
+                    timeout: 10000,
+                },
+            })
+            .addTo(map);
+
+        /*Plugin Mouse Position Coordinate */
+        L.control
+            .mousePosition({
+                position: "bottomright",
+                separator: ",",
+                prefix: "Point Coodinate: ",
+            })
+            .addTo(map);
+
+        /*Plugin Measurement Tool */
+        var measureControl = new L.Control.Measure({
+            position: "topleft",
+            primaryLengthUnit: "meters",
+            secondaryLengthUnit: "kilometers",
+            primaryAreaUnit: "hectares",
+            secondaryAreaUnit: "sqmeters",
+            activeColor: "#FF0000",
+            completedColor: "#00FF00",
+        });
+        measureControl.addTo(map);
+
+        /*Plugin EasyPrint */
+        L.easyPrint({
+            title: "Print",
+        }).addTo(map);
+
+
+    </script>
+    
+</body>
+
+</html>
